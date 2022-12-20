@@ -8,8 +8,6 @@ import { Button } from '../../components/Button'
 import { TextInput } from '../../components/TextInput'
 
 export const Home = () => {
-  // const { posts, page, postsPerPage, allPosts, searchValue } = this.state
-
   const [posts, setPosts] = useState([])
   const [allPosts, setAllPosts] = useState([])
   const [page, setPage] = useState(0)
@@ -31,16 +29,11 @@ export const Home = () => {
     setAllPosts(postsAndPhotos)
   }, [])
 
-
-  
   useEffect(() => {
     handleLoadPosts(0, postsPerPage)
-
-  },[handleLoadPosts, postsPerPage])
-  
+  }, [handleLoadPosts, postsPerPage])
 
   const loadMorePosts = () => {
-
     const nextPage = page + postsPerPage
     const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
     posts.push(...nextPosts)
