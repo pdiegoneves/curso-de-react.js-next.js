@@ -8,17 +8,9 @@ describe('<PostCard />', () => {
   it('should render PostCard correctly', () => {
     render(<PostCard {...props} />)
 
-    expect(screen.getByRole('img', { name: /title 1/i })).toHaveAttribute(
-      'src',
-      'img/img.png'
-    )
-    expect(screen.getByAltText(/title 1/i)).toHaveAttribute(
-      'src',
-      'img/img.png'
-    )
-    expect(
-      screen.getByRole('heading', { name: /1 - title 1/i })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /title 1/i })).toHaveAttribute('src', 'img/img.png')
+    expect(screen.getByAltText(/title 1/i)).toHaveAttribute('src', 'img/img.png')
+    expect(screen.getByRole('heading', { name: /1 - title 1/i })).toBeInTheDocument()
     expect(screen.getByText('body 1')).toBeInTheDocument()
   })
 
@@ -27,5 +19,4 @@ describe('<PostCard />', () => {
 
     expect(container.firstChild).toMatchSnapshot()
   })
-
 })
