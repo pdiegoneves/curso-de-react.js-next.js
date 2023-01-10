@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext, useState, createContext } from 'react'
 import './App.css'
 
 const globalState = {
@@ -7,7 +7,7 @@ const globalState = {
   counter: 0,
 }
 
-const GlobalContext = React.createContext()
+const GlobalContext = createContext()
 
 //eslint-disable-next-line
 const Div = ({ children }) => {
@@ -22,18 +22,37 @@ const Div = ({ children }) => {
 //eslint-disable-next-line
 const H1 = () => {
   const theContext = useContext(GlobalContext)
-  return <h1>{theContext.title}</h1>
+  const {
+    contextState: { title, counter },
+  } = theContext
+  return (
+    <h1>
+      {title} {counter}
+    </h1>
+  )
 }
 
 //eslint-disable-next-line
 const P = () => {
   const theContext = useContext(GlobalContext)
-  return <p>{theContext.body}</p>
+  const {
+    contextState: { body },
+    setContextState,
+  } = theContext
+  return (
+    <p
+      onClick={() => setContextState((s) => ({ ...s, counter: s.counter + 1 }))}
+    >
+      {body}
+    </p>
+  )
 }
 
 function App() {
+  const [contextState, setContextState] = useState(globalState)
+
   return (
-    <GlobalContext.Provider value={globalState}>
+    <GlobalContext.Provider value={{ contextState, setContextState }}>
       <Div />
     </GlobalContext.Provider>
   )
