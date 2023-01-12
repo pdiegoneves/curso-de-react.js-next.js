@@ -1,13 +1,17 @@
-import { Div } from './components/Div'
-import { AppContext } from './contexts/AppContext'
-
 import './App.css'
+
+//eslint-disable-next-line
+const globalState = {
+  title: 'O título do contexto',
+  body: 'O body do contexto',
+  counter: 0,
+}
 
 function App() {
   return (
-    <AppContext>
-      <Div />
-    </AppContext>
+    <div>
+      <h1>Oi</h1>
+    </div>
   )
 }
 
