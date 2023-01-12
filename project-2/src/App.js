@@ -1,21 +1,11 @@
-import { useContext, useState, createContext } from 'react'
-import './App.css'
-
-const globalState = {
-  title: 'o titulo do contexto',
-  body: 'o body do contexto',
-  counter: 0,
-}
-
-const GlobalContext = createContext()
+import { Div } from './components/Div'
+import { AppContext } from './contexts/AppContext'
 
 function App() {
-  const [contextState, setContextState] = useState(globalState)
-
   return (
-    <GlobalContext.Provider value={{ contextState, setContextState }}>
+    <AppContext>
       <Div />
-    </GlobalContext.Provider>
+    </AppContext>
   )
 }
 
