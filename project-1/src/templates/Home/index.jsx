@@ -1,64 +1,40 @@
-import { useEffect, useState, useCallback } from 'react'
+/* eslint-disable */
+import { useState, useEffect } from 'react'
 
-import './styles.css'
-
-import { Posts } from '../../components/Posts'
-import { loadPosts } from '../../utils/load-posts'
-import { Button } from '../../components/Button'
-import { TextInput } from '../../components/TextInput'
-
-export const Home = () => {
-  const [posts, setPosts] = useState([])
-  const [allPosts, setAllPosts] = useState([])
-  const [page, setPage] = useState(0)
-  const [postsPerPage] = useState(2)
-  const [searchValue, setSearchValue] = useState('')
-
-  const noMorePosts = page + postsPerPage >= allPosts.length
-
-  const filteredPosts = searchValue
-    ? allPosts.filter((post) => {
-        return post.title.toLowerCase().includes(searchValue.toLowerCase())
-      })
-    : posts
-
-  const handleLoadPosts = useCallback(async (page, postsPerPage) => {
-    const postsAndPhotos = await loadPosts()
-
-    setPosts(postsAndPhotos.slice(page, postsPerPage))
-    setAllPosts(postsAndPhotos)
-  }, [])
+const useFetch = (url, options) => {
+  const [result, setResult] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    handleLoadPosts(0, postsPerPage)
-  }, [handleLoadPosts, postsPerPage])
+    console.log('EFFECT', new Date().toLocaleDateString())
+    setLoading(true)
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, options)
+        const jsonResult = await response.json()
+        setResult(jsonResult)
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
+        throw e
+      }
+    }
 
-  const loadMorePosts = () => {
-    const nextPage = page + postsPerPage
-    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
-    posts.push(...nextPosts)
-    setPosts(posts)
-    setPage(nextPage)
+    fetchData()
+  }, [url, options])
+
+  return [result, options]
+}
+export const Home = () => {
+  const [result, loading] = useFetch('https://jsonplaceholder.typicode.com/posts')
+
+  if (loading) {
+    return <p>Loading...</p>
   }
 
-  const handleChange = (e) => {
-    const { value } = e.target
-    setSearchValue(value)
+  if (!loading && result) {
+    console.log(result)
   }
 
-  return (
-    <section className="container">
-      <div className="search-container">
-        {!!searchValue && <h1>Search Value: {searchValue}</h1>}
-
-        <TextInput searchValue={searchValue} handleChange={handleChange} />
-      </div>
-
-      {filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
-      {filteredPosts.length === 0 && <p>Nenhum post encontrado</p>}
-      <div className="button-container">
-        {!searchValue && <Button text="Load More Posts" onClick={loadMorePosts} disabled={noMorePosts} />}
-      </div>
-    </section>
-  )
+  return <h1>Oi</h1>
 }
