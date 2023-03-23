@@ -1,40 +1,25 @@
-import { useState } from 'react'
-import { useFetch } from './use-fetch'
+import { useState, useEffect, useCallback } from 'react'
+
+const useAsync = () => {
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+  const [status, setStatus] = useState('idle')
+
+  const run = useCallback(() => {}, [])
+}
 
 export const Home = () => {
-  const [postId, setPostId] = useState('')
-  const [result, loading] = useFetch('https://jsonplaceholder.typicode.com/posts/' + postId, {
-    headers: {
-      abc: '1' + postId,
-    },
-  })
+  const [posts, setPosts] = useState(null)
 
-  if (loading) {
-    return <p>Loading...</p>
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetch('https://jsonplaceholder.typicode.com/posts/')
+      const json = await data.json()
+      setPosts(json)
+      return json
+    }
 
-  const handleClick = (id) => {
-    setPostId(id)
-  }
-
-  if (!loading && result) {
-    // 1234
-    return (
-      <div>
-        {result?.length > 0 ? (
-          result.map((p) => (
-            <div key={`post-${p.id}`} onClick={() => handleClick(p.id)}>
-              <p>{p.title}</p>
-            </div>
-          ))
-        ) : (
-          <div onClick={() => handleClick('')}>
-            <p>{result.title}</p>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  return <h1>Oi</h1>
+    fetchData()
+  }, [])
+  return <pre>{JSON.stringify(posts, null, 2)}</pre>
 }
