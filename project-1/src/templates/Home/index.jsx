@@ -13,12 +13,12 @@ const useAsync = (asyncFunction, shouldRun) => {
 
     return asyncFunction()
       .then((response) => {
-        setStatus('settled')
         setResult(response)
+        setStatus('settled')
       })
       .catch((error) => {
-        setStatus('error')
         setError(error)
+        setStatus('error')
       })
   }, [asyncFunction])
 
@@ -41,5 +41,21 @@ export const Home = () => {
   const [posts, setPosts] = useState(null)
   const [reFetchData, result, error, status] = useAsync(fetchData, true)
 
-  return <pre>{JSON.stringify(result, null, 2)}</pre>
+  if (status === 'idle') {
+    return <pre>Nada executando</pre>
+  }
+
+  if (status === 'pending') {
+    return <pre>Loading...</pre>
+  }
+
+  if (status === 'error') {
+    return <pre>{error.message}</pre>
+  }
+
+  if (status === 'settled') {
+    return <pre>{JSON.stringify(result, null, 2)}</pre>
+  }
+
+  return 'IXII'
 }
