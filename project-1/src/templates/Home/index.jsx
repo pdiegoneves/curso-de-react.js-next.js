@@ -1,24 +1,35 @@
 import { useState, useEffect, useCallback } from 'react'
 
 const useAsync = (asyncFunction, shouldRun) => {
-  const [result, setResult] = useState(null)
-  const [error, setError] = useState(null)
-  const [status, setStatus] = useState('idle')
+  const [state, setState] = useState({
+    result: null,
+    error: null,
+    status: 'idle',
+  })
 
   const run = useCallback(() => {
     console.log('EFFECT', new Date().toLocaleTimeString())
-    setResult(null)
-    setError(null)
-    setStatus('pending')
+
+    setState({
+      result: null,
+      error: null,
+      status: 'pending',
+    })
 
     return asyncFunction()
       .then((response) => {
-        setResult(response)
-        setStatus('settled')
+        setState({
+          result: response,
+          error: null,
+          status: 'settled',
+        })
       })
-      .catch((error) => {
-        setError(error)
-        setStatus('error')
+      .catch((err) => {
+        setState({
+          result: null,
+          error: err,
+          status: 'error',
+        })
       })
   }, [asyncFunction])
 
@@ -28,7 +39,7 @@ const useAsync = (asyncFunction, shouldRun) => {
     }
   }, [run, shouldRun])
 
-  return [run, result, error, status]
+  return [run, state.result, state.error, state.status]
 }
 
 const fetchData = async () => {
@@ -40,6 +51,10 @@ const fetchData = async () => {
 export const Home = () => {
   const [posts, setPosts] = useState(null)
   const [reFetchData, result, error, status] = useAsync(fetchData, true)
+
+  function handleClick() {
+    reFetchData()
+  }
 
   if (status === 'idle') {
     return <pre>Nada executando</pre>
@@ -54,7 +69,7 @@ export const Home = () => {
   }
 
   if (status === 'settled') {
-    return <pre>{JSON.stringify(result, null, 2)}</pre>
+    return <pre onClick={handleClick}>{JSON.stringify(result, null, 2)}</pre>
   }
 
   return 'IXII'
