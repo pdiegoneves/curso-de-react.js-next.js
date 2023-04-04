@@ -23,5 +23,11 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'no-unused-vars': 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
   },
 }
