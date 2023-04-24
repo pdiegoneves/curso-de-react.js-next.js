@@ -1,4 +1,4 @@
-import { Component, useEffect, useState } from 'react'
+import { Children, cloneElement, useState } from 'react'
 
 const s = {
   style: {
@@ -6,66 +6,40 @@ const s = {
   },
 }
 
-class MyErrorBoundary extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { hasError: false }
-  }
+const TurnOnOff = ({ children }) => {
+  const [isOn, setIsOn] = useState(false)
+  const onTurn = () => setIsOn((s) => !s)
 
-  static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true }
-  }
-
-  componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    // console.log(error, errorInfo)
-  }
-
-  render() {
-    if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <p {...s}>Deu ruim 😢.</p>
-    }
-
-    return this.props.children
-  }
+  return Children.map(children, (child) => {
+    const newChild = cloneElement(child, {
+      isOn,
+      onTurn,
+    })
+    return newChild
+  })
 }
-
-const ItWillThrowError = () => {
-  const [counter, setCounter] = useState(0)
-
-  useEffect(() => {
-    console.log(counter)
-    if (counter > 3) {
-      throw new Error('Que chato!!!')
-    }
-    return () => {
-      // cleanup
-    }
-  }, [counter])
-
+const TurnedOn = ({ isOn, children }) => (isOn ? children : null)
+const TurnedOff = ({ isOn, children }) => (isOn ? null : children)
+const TurnButton = ({ isOn, onTurn, ...props }) => {
   return (
-    <div>
-      <button {...s} onClick={() => setCounter((s) => s + 1)}>
-        Click to incrise {counter}
-      </button>
-    </div>
+    <button onClick={onTurn} {...props}>
+      Turn {isOn ? 'OFF' : 'ON'}
+    </button>
   )
 }
 
+const P = ({ children }) => <p {...s}>{children}</p>
+
 export const Home = () => {
   return (
-    <div>
-      <MyErrorBoundary>
-        <ItWillThrowError />
-      </MyErrorBoundary>
-      <MyErrorBoundary>
-        <ItWillThrowError />
-      </MyErrorBoundary>
-      <MyErrorBoundary>
-        <ItWillThrowError />
-      </MyErrorBoundary>
-    </div>
+    <TurnOnOff>
+      <TurnedOn>
+        <P>Aqui as coisas que acontecer quando estiver ON.</P>
+      </TurnedOn>
+      <TurnedOff>
+        <P>Aqui vem as coisas do OFF.</P>
+      </TurnedOff>
+      <TurnButton {...s} />
+    </TurnOnOff>
   )
 }
