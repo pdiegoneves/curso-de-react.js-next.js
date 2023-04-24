@@ -1,39 +1,71 @@
-import { useDebugValue, useEffect, useState } from 'react'
+import { Component, useEffect, useState } from 'react'
 
-const useMediaQuery = (queryValue, initialValues = false) => {
-  const [match, setMatch] = useState(initialValues)
+const s = {
+  style: {
+    fontSize: '60px',
+  },
+}
 
-  useDebugValue(`Query: ${queryValue}`, (name) => {
-    return name + ' modificado'
-  })
+class MyErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // You can also log the error to an error reporting service
+    // console.log(error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <p {...s}>Deu ruim 😢.</p>
+    }
+
+    return this.props.children
+  }
+}
+
+const ItWillThrowError = () => {
+  const [counter, setCounter] = useState(0)
 
   useEffect(() => {
-    let isMounted = true
-    const matchMedia = window.matchMedia(queryValue)
-
-    const handleChange = () => {
-      if (!isMounted) return
-
-      setMatch(!!matchMedia.matches)
+    console.log(counter)
+    if (counter > 3) {
+      throw new Error('Que chato!!!')
     }
-
-    matchMedia.addEventListener('change', handleChange)
-    setMatch(!!matchMedia.matches)
-
     return () => {
-      isMounted = false
-      matchMedia.removeEventListener('change', handleChange)
+      // cleanup
     }
-  }, [queryValue])
+  }, [counter])
 
-  return match
+  return (
+    <div>
+      <button {...s} onClick={() => setCounter((s) => s + 1)}>
+        Click to incrise {counter}
+      </button>
+    </div>
+  )
 }
 
 export const Home = () => {
-  const huge = useMediaQuery('(min-width: 980px)')
-  const big = useMediaQuery('(max-width: 979px) and (min-width: 768px)')
-  const medium = useMediaQuery('(max-width: 767px) and (min-width: 321px)')
-  const small = useMediaQuery('(max-width: 321px)')
-  const background = huge ? 'green' : big ? 'red' : medium ? 'yellow' : small ? 'purple' : null
-  return <div style={{ fontSize: '60px', background }}>OI</div>
+  return (
+    <div>
+      <MyErrorBoundary>
+        <ItWillThrowError />
+      </MyErrorBoundary>
+      <MyErrorBoundary>
+        <ItWillThrowError />
+      </MyErrorBoundary>
+      <MyErrorBoundary>
+        <ItWillThrowError />
+      </MyErrorBoundary>
+    </div>
+  )
 }
