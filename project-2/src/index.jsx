@@ -9,13 +9,13 @@ import { Menu } from './components/Menu'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <React.StrictMode>
       <Menu />
       <Switch>
-        <Route path="/" component={App} exact />
-        <Route path="/abc" component={Abc} exact />
+        <Route path="/abc/:slug?/:id?" component={Abc} />
+        <Route path="/" component={App} />
       </Switch>
-    </BrowserRouter>
-  </React.StrictMode>,
+    </React.StrictMode>
+  </BrowserRouter>,
 )
