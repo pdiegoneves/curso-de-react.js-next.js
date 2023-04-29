@@ -1,13 +1,9 @@
-import { useParams, useSearchParams } from 'react-router-dom'
 import './style.css'
 
 export const Post = () => {
-    const params = useParams()
-    const { id } = params
-    const [qs, setQs] = useSearchParams() 
     return (
         <div>
-            <h1>Posts {`Params: ${id} QS: ${qs.get('page')}`}</h1>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae nostrum sequi possimus rem architecto molestias, ea eius earum reiciendis voluptas nobis unde accusantium labore, animi iste omnis amet temporibus adipisci.</p>
         </div>
     )
 }
